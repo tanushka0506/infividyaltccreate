@@ -39,9 +39,9 @@ def home():
 
         data.forEach(item => {
             let localTime = new Date(item.timestamp).toLocaleString();
-
+            let displayName = item.name ? item.name : "Unknown";
             html += `<div style="border:1px solid #ccc; padding:10px; margin:5px;">
-                <b>${item.user}</b><br>
+                <b>${item.name} (${item.user})</b><br>
                 Site: ${item.domain}<br>
                 Time: ${localTime}
             </div>`;
