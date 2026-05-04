@@ -17,7 +17,7 @@ def log():
 
 @app.route('/data', methods=['GET'])
 def get_data():
-    logs = list(collection.find({}, {"_id": 0}).limit(20))
+    logs = list(collection.find({}, {"_id": 0}).sort("_id", -1).limit(20))
     return jsonify(logs)
 
 @app.route('/')
