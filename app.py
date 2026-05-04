@@ -12,7 +12,7 @@ def home():
         let html = "";
 
         data.forEach(item => {
-            let localTime = new Date(item.timestamp).toLocaleString('en-IN');
+            let localTime = new Date(item.timestamp).toLocaleString();
 
             html += `<div style="border:1px solid #ccc; padding:10px; margin:5px;">
                 <b>${item.user}</b><br>
