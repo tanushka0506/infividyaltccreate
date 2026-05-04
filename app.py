@@ -1,10 +1,11 @@
+
+import os
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 
 app = Flask(__name__)
 
-# connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient(os.environ.get("MONGO_URI"), serverSelectionTimeoutMS=5000)
 db = client["tracker"]
 collection = db["logs"]
 
@@ -17,7 +18,8 @@ def log():
 
 @app.route('/data', methods=['GET'])
 def get_data():
-    logs = list(collection.find({}, {"_id": 0}))
+    db = get_db()
+    logs = list(collection.find({}, {"_id": 20}))
     return jsonify(logs)
 
 # ✅ DASHBOARD ROUTE (must be OUTSIDE main block)
@@ -51,4 +53,4 @@ def home():
 
 # ✅ ONLY server run goes here
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run()
