@@ -28,7 +28,7 @@ def home():
 
     <script>
     async function load() {
-        let res = await fetch('/data');
+        let res = let res = await fetch('/data?nocache=' + new Date().getTime());
         let data = await res.json();
 
         let html = "";
