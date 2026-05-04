@@ -1,4 +1,3 @@
-
 import os
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
@@ -18,11 +17,9 @@ def log():
 
 @app.route('/data', methods=['GET'])
 def get_data():
-    db = get_db()
-    logs = list(collection.find({}, {"_id": 20}))
+    logs = list(collection.find({}, {"_id": 0}).limit(20))
     return jsonify(logs)
 
-# ✅ DASHBOARD ROUTE (must be OUTSIDE main block)
 @app.route('/')
 def home():
     return """
@@ -51,6 +48,5 @@ def home():
     </script>
     """
 
-# ✅ ONLY server run goes here
 if __name__ == "__main__":
     app.run()
