@@ -27,32 +27,116 @@ def get_data():
 @app.route('/')
 def home():
     return """
-    <h2>Employee Activity Dashboard</h2>
-    <div id="data"></div>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Employee Tracker</title>
 
-    <script>
-    async function load() {
-        let res = await fetch('/data?nocache=' + new Date().getTime());
-        let data = await res.json();
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: #f5f7fa;
+                margin: 0;
+                padding: 0;
+            }
 
-        let html = "";
+            .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: #1e293b;
+                color: white;
+                padding: 15px 30px;
+            }
 
-        data.forEach(item => {
-            let localTime = new Date(item.timestamp).toLocaleString();
-            let displayName = item.name ? item.name : "Unknown";
-            html += `<div style="border:1px solid #ccc; padding:10px; margin:5px;">
-                <b>${item.name} (${item.user})</b><br>
-                Site: ${item.domain}<br>
-                Time: ${localTime}
-            </div>`;
-        });
+            .header h1 {
+                margin: 0;
+                font-size: 20px;
+            }
 
-        document.getElementById("data").innerHTML = html;
-    }
+            .logo {
+                height: 40px;
+            }
 
-    setInterval(load, 3000);
-    load();
-    </script>
+            .container {
+                padding: 20px;
+                max-width: 900px;
+                margin: auto;
+            }
+
+            .card {
+                background: white;
+                border-radius: 10px;
+                padding: 15px 20px;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                transition: 0.2s;
+            }
+
+            .card:hover {
+                transform: scale(1.01);
+            }
+
+            .user {
+                font-weight: bold;
+                font-size: 16px;
+                color: #1e293b;
+            }
+
+            .domain {
+                color: #2563eb;
+                margin-top: 5px;
+            }
+
+            .time {
+                color: gray;
+                font-size: 12px;
+                margin-top: 5px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="header">
+            <h1>Employee Activity Dashboard</h1>
+
+            <!-- 🔥 ADD YOUR LOGO HERE -->
+            <img src="https://via.placeholder.com/100x40?text=LOGO" class="logo">
+        </div>
+
+        <div class="container">
+            <div id="data"></div>
+        </div>
+
+        <script>
+        async function load() {
+            let res = await fetch('/data?nocache=' + new Date().getTime());
+            let data = await res.json();
+
+            let html = "";
+
+            data.forEach(item => {
+                let localTime = new Date(item.timestamp).toLocaleString();
+
+                html += `
+                    <div class="card">
+                        <div class="user">${item.name} (${item.user})</div>
+                        <div class="domain">🌐 ${item.domain}</div>
+                        <div class="time">🕒 ${localTime}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById("data").innerHTML = html;
+        }
+
+        setInterval(load, 3000);
+        load();
+        </script>
+
+    </body>
+    </html>
     """
 
 if __name__ == "__main__":
