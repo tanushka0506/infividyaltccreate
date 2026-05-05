@@ -102,7 +102,7 @@ def home():
             <h1>Employee Activity Dashboard</h1>
 
             <!-- 🔥 ADD YOUR LOGO HERE -->
-            <img src="https://via.placeholder.com/100x40?text=LOGO" class="logo">
+            <img src="https://media.licdn.com/dms/image/v2/D4D0BAQF5ABpfcNZB4w/company-logo_200_200/company-logo_200_200/0/1692003695229/infividhya_logo?e=2147483647&v=beta&t=Y5zboVYxQyIRa9y4DrAiYXpjva6-vCvRlxQw5rjvxFk" class="logo">
         </div>
 
         <div class="container">
