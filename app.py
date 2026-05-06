@@ -51,8 +51,12 @@ def history(date):
             {"_id": 0}
         ).sort("timestamp", -1)
     )
-
     return jsonify(logs)
+    
+@app.route('/users', methods=['GET'])
+def users():
+    all_users = collection.distinct("user")
+    return jsonify(all_users)
 
 @app.route('/')
 def home():
