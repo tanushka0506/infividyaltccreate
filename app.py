@@ -8,6 +8,7 @@ app = Flask(__name__)
 # ✅ THEN DB
 client = MongoClient(os.environ.get("MONGO_URI"), serverSelectionTimeoutMS=5000)
 db = client["tracker"]
+employees = db["employees"]
 collection = db["logs"]
 
 # ✅ ROUTES AFTER app is defined
@@ -58,6 +59,26 @@ def users():
     all_users = collection.distinct("user")
     return jsonify(all_users)
 
+@app.route('/validate-user', methods=['POST'])
+def validate_user():
+
+    data = request.json
+
+    employee = employees.find_one({
+        "userId": data.get("userId")
+    })
+
+    if not employee:
+        return jsonify({
+            "ok": False,
+            "message": "Invalid ID"
+        })
+
+    return jsonify({
+        "ok": True,
+        "name": employee["name"]
+    })
+    
 @app.route('/')
 def home():
     return open("dashboard.html").read()
