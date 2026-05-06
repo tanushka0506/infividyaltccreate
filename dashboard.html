@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <title>Tracker Dashboard</title>
 
@@ -11,6 +12,8 @@ body{
     background:#0f172a;
     color:white;
 }
+
+/* SIDEBAR */
 
 .sidebar{
     width:220px;
@@ -27,12 +30,23 @@ body{
 .menu div{
     margin:15px 0;
     cursor:pointer;
+    padding:10px;
+    border-radius:10px;
+    transition:0.2s;
 }
+
+.menu div:hover{
+    background:#1e293b;
+}
+
+/* MAIN */
 
 .main{
     margin-left:240px;
     padding:20px;
 }
+
+/* DASHBOARD */
 
 .users{
     display:flex;
@@ -45,36 +59,106 @@ body{
     padding:15px;
     border-radius:15px;
     width:220px;
+    transition:0.2s;
 }
+
+.card:hover{
+    transform:translateY(-3px);
+}
+
+.card p{
+    color:#cbd5e1;
+}
+
+/* HISTORY */
 
 .history{
     display:none;
 }
 
-.log{
+.filters{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+select,
+input{
     background:#1e293b;
+    color:white;
+    border:none;
     padding:10px;
     border-radius:10px;
-    margin-bottom:10px;
+}
+
+/* TABLE */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    background:#1e293b;
+    border-radius:15px;
+    overflow:hidden;
+}
+
+thead{
+    background:#334155;
+}
+
+th{
+    text-align:left;
+    padding:15px;
+}
+
+td{
+    padding:15px;
+    border-bottom:1px solid #334155;
+}
+
+tr:hover{
+    background:#273449;
+}
+
+.domain{
+    color:#38bdf8;
+}
+
+.duration{
+    color:#22c55e;
 }
 
 </style>
+
 </head>
 
 <body>
+
+<!-- SIDEBAR -->
 
 <div class="sidebar">
 
 <h2>Tracker</h2>
 
 <div class="menu">
-<div onclick="showDashboard()">🏠 Dashboard</div>
-<div onclick="showHistory()">📊 History</div>
+
+<div onclick="showDashboard()">
+🏠 Dashboard
+</div>
+
+<div onclick="showHistory()">
+📊 History
 </div>
 
 </div>
+
+</div>
+
+<!-- MAIN -->
 
 <div class="main">
+
+<!-- DASHBOARD -->
 
 <div id="dashboard">
 
@@ -84,13 +168,48 @@ body{
 
 </div>
 
+<!-- HISTORY -->
+
 <div id="historyPage" class="history">
 
 <h1>History</h1>
 
-<input type="date" id="datePicker" onchange="loadHistory()">
+<div class="filters">
 
-<div id="history"></div>
+<select id="userFilter" onchange="loadHistory()">
+
+<option value="">All Users</option>
+
+</select>
+
+<input
+type="date"
+id="datePicker"
+onchange="loadHistory()"
+>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>User</th>
+<th>Website</th>
+<th>Time</th>
+<th>Duration</th>
+
+</tr>
+
+</thead>
+
+<tbody id="historyTable">
+
+</tbody>
+
+</table>
 
 </div>
 
@@ -98,20 +217,66 @@ body{
 
 <script>
 
+/* PAGE SWITCHING */
+
 function showDashboard(){
-    document.getElementById("dashboard").style.display="block";
-    document.getElementById("historyPage").style.display="none";
+
+    document.getElementById("dashboard")
+    .style.display="block";
+
+    document.getElementById("historyPage")
+    .style.display="none";
 }
 
 function showHistory(){
-    document.getElementById("dashboard").style.display="none";
-    document.getElementById("historyPage").style.display="block";
+
+    document.getElementById("dashboard")
+    .style.display="none";
+
+    document.getElementById("historyPage")
+    .style.display="block";
 }
+
+/* LOAD USERS */
+
+async function loadUsers(){
+
+    let res =
+        await fetch('/users');
+
+    let data =
+        await res.json();
+
+    let html =
+        `<option value="">All Users</option>`;
+
+    data.forEach(user => {
+
+        html += `
+        <option value="${user}">
+        ${user}
+        </option>
+        `;
+    });
+
+    document.getElementById("userFilter")
+    .innerHTML = html;
+}
+
+/* DASHBOARD */
 
 async function loadDashboard(){
 
-    let res = await fetch('/active');
-    let data = await res.json();
+    let res =
+        await fetch('/active');
+
+    let data =
+        await res.json();
+
+    /* STABLE ORDER */
+    data.sort((a,b)=>
+        (a.user || "").localeCompare(b.user || "")
+    );
 
     let html="";
 
@@ -120,77 +285,123 @@ async function loadDashboard(){
         html += `
         <div class="card">
 
-        <h3>${item.name}</h3>
-
-        <p>${item.user}</p>
-
-        <p>🌐 ${item.domain || "No domain"}</p>
+        <h3>
+        ${item.name || "Unknown"}
+        </h3>
 
         <p>
+        ${item.user || "No ID"}
+        </p>
+
+        <p class="domain">
+        🌐 ${item.domain || "No domain"}
+        </p>
+
+        <p>
+
         🕒
+
         ${
             item.timestamp
-            ? new Date(item.timestamp).toLocaleTimeString()
+            ? new Date(item.timestamp)
+                .toLocaleTimeString()
             : "Active"
         }
+
         </p>
 
         </div>
         `;
     });
 
-    document.getElementById("users").innerHTML=html;
+    document.getElementById("users")
+    .innerHTML = html;
 }
+
+/* HISTORY */
 
 async function loadHistory(){
 
     let date =
-        document.getElementById("datePicker").value;
+        document.getElementById("datePicker")
+        .value;
+
+    let selectedUser =
+        document.getElementById("userFilter")
+        .value;
+
+    if(!date) return;
 
     let res =
         await fetch('/history/' + date);
 
-    let data = await res.json();
+    let data =
+        await res.json();
 
     let html="";
 
     data.forEach(item=>{
 
-        html += `
-        <div class="log">
-
-        <b>${item.name} (${item.user})</b><br>
-
-        🌐 ${item.domain}<br>
-
-        🕒
-        ${
-            item.startTime
-            ? new Date(item.startTime).toLocaleString()
-            : new Date(item.timestamp).toLocaleString()
+        if(
+            selectedUser &&
+            item.user !== selectedUser
+        ){
+            return;
         }
 
-        <br>
+        html += `
 
-        ⏱
+        <tr>
+
+        <td>
+        ${item.name || "Unknown"}
+        (${item.user || "No ID"})
+        </td>
+
+        <td class="domain">
+        🌐 ${item.domain || "No Domain"}
+        </td>
+
+        <td>
+
+        ${
+            item.startTime
+            ? new Date(item.startTime)
+                .toLocaleString()
+            : new Date(item.timestamp)
+                .toLocaleString()
+        }
+
+        </td>
+
+        <td class="duration">
+
         ${
             item.duration
             ? Math.round(item.duration) + " sec"
-            : "N/A"
+            : "-"
         }
 
-        </div>
+        </td>
+
+        </tr>
         `;
     });
 
-    document.getElementById("history").innerHTML=html;
+    document.getElementById("historyTable")
+    .innerHTML=html;
 }
+
+/* AUTO REFRESH */
 
 setInterval(loadDashboard,3000);
 
 loadDashboard();
 
+loadUsers();
+
 </script>
 
 </body>
+
 </html>
