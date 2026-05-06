@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tracker Dashboard</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f172a;
+    color:white;
+}
+
+.sidebar{
+    width:220px;
+    height:100vh;
+    background:#020617;
+    position:fixed;
+    padding:20px;
+}
+
+.sidebar h2{
+    color:#38bdf8;
+}
+
+.menu div{
+    margin:15px 0;
+    cursor:pointer;
+}
+
+.main{
+    margin-left:240px;
+    padding:20px;
+}
+
+.users{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.card{
+    background:#1e293b;
+    padding:15px;
+    border-radius:15px;
+    width:220px;
+}
+
+.history{
+    display:none;
+}
+
+.log{
+    background:#1e293b;
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Tracker</h2>
+
+<div class="menu">
+<div onclick="showDashboard()">🏠 Dashboard</div>
+<div onclick="showHistory()">📊 History</div>
+</div>
+
+</div>
+
+<div class="main">
+
+<div id="dashboard">
+
+<h1>Live Employees</h1>
+
+<div class="users" id="users"></div>
+
+</div>
+
+<div id="historyPage" class="history">
+
+<h1>History</h1>
+
+<input type="date" id="datePicker" onchange="loadHistory()">
+
+<div id="history"></div>
+
+</div>
+
+</div>
+
+<script>
+
+function showDashboard(){
+    document.getElementById("dashboard").style.display="block";
+    document.getElementById("historyPage").style.display="none";
+}
+
+function showHistory(){
+    document.getElementById("dashboard").style.display="none";
+    document.getElementById("historyPage").style.display="block";
+}
+
+async function loadDashboard(){
+
+    let res = await fetch('/active');
+    let data = await res.json();
+
+    let html="";
+
+    data.forEach(item=>{
+
+        html += `
+        <div class="card">
+
+        <h3>${item.name}</h3>
+
+        <p>${item.user}</p>
+
+        <p>🌐 ${item.domain || "No domain"}</p>
+
+        <p>
+        🕒
+        ${
+            item.timestamp
+            ? new Date(item.timestamp).toLocaleTimeString()
+            : "Active"
+        }
+        </p>
+
+        </div>
+        `;
+    });
+
+    document.getElementById("users").innerHTML=html;
+}
+
+async function loadHistory(){
+
+    let date =
+        document.getElementById("datePicker").value;
+
+    let res =
+        await fetch('/history/' + date);
+
+    let data = await res.json();
+
+    let html="";
+
+    data.forEach(item=>{
+
+        html += `
+        <div class="log">
+
+        <b>${item.name} (${item.user})</b><br>
+
+        🌐 ${item.domain}<br>
+
+        🕒
+        ${
+            item.startTime
+            ? new Date(item.startTime).toLocaleString()
+            : new Date(item.timestamp).toLocaleString()
+        }
+
+        <br>
+
+        ⏱
+        ${
+            item.duration
+            ? Math.round(item.duration) + " sec"
+            : "N/A"
+        }
+
+        </div>
+        `;
+    });
+
+    document.getElementById("history").innerHTML=html;
+}
+
+setInterval(loadDashboard,3000);
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
