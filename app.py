@@ -2,16 +2,12 @@ import os
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 
-# ✅ FIRST define app
 app = Flask(__name__)
 
-# ✅ THEN DB
 client = MongoClient(os.environ.get("MONGO_URI"), serverSelectionTimeoutMS=5000)
 db = client["tracker"]
 employees = db["employees"]
 collection = db["logs"]
-
-# ✅ ROUTES AFTER app is defined
 
 @app.route('/log', methods=['POST'])
 def log():
