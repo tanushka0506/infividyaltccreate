@@ -12,9 +12,6 @@ body{
     background:#0f172a;
     color:white;
 }
-
-/* SIDEBAR */
-
 .sidebar{
     width:220px;
     height:100vh;
@@ -39,14 +36,11 @@ body{
     background:#1e293b;
 }
 
-/* MAIN */
 
 .main{
     margin-left:240px;
     padding:20px;
 }
-
-/* DASHBOARD */
 
 .users{
     display:flex;
@@ -70,7 +64,6 @@ body{
     color:#cbd5e1;
 }
 
-/* HISTORY */
 
 .history{
     display:none;
@@ -90,8 +83,6 @@ input{
     padding:10px;
     border-radius:10px;
 }
-
-/* TABLE */
 
 table{
     width:100%;
@@ -134,8 +125,6 @@ tr:hover{
 
 <body>
 
-<!-- SIDEBAR -->
-
 <div class="sidebar">
 
 <h2>Tracker</h2>
@@ -154,11 +143,7 @@ tr:hover{
 
 </div>
 
-<!-- MAIN -->
-
 <div class="main">
-
-<!-- DASHBOARD -->
 
 <div id="dashboard">
 
@@ -167,8 +152,6 @@ tr:hover{
 <div class="users" id="users"></div>
 
 </div>
-
-<!-- HISTORY -->
 
 <div id="historyPage" class="history">
 
@@ -217,8 +200,6 @@ onchange="loadHistory()"
 
 <script>
 
-/* PAGE SWITCHING */
-
 function showDashboard(){
 
     document.getElementById("dashboard")
@@ -236,8 +217,6 @@ function showHistory(){
     document.getElementById("historyPage")
     .style.display="block";
 }
-
-/* LOAD USERS */
 
 async function loadUsers(){
 
@@ -263,8 +242,6 @@ async function loadUsers(){
     .innerHTML = html;
 }
 
-/* DASHBOARD */
-
 async function loadDashboard(){
 
     let res =
@@ -273,7 +250,6 @@ async function loadDashboard(){
     let data =
         await res.json();
 
-    /* STABLE ORDER */
     data.sort((a,b)=>
         (a.user || "").localeCompare(b.user || "")
     );
@@ -317,8 +293,6 @@ async function loadDashboard(){
     document.getElementById("users")
     .innerHTML = html;
 }
-
-/* HISTORY */
 
 async function loadHistory(){
 
@@ -391,8 +365,6 @@ async function loadHistory(){
     document.getElementById("historyTable")
     .innerHTML=html;
 }
-
-/* AUTO REFRESH */
 
 setInterval(loadDashboard,3000);
 
