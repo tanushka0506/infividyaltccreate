@@ -101,16 +101,13 @@ def validate_user():
 
 @app.route('/login')
 def login_page():
-
     return open('login.html').read()
-
-
 @app.route('/login', methods=['POST'])
 def login():
-
     username = request.form.get('username')
-
     password = request.form.get('password')
+    print("USERNAME:", username)
+    print("PASSWORD:", password)
 
     admin = admins.find_one({
 
@@ -118,6 +115,8 @@ def login():
 
         "password": password
     })
+
+    print("ADMIN FOUND:", admin)
 
     if admin:
 
