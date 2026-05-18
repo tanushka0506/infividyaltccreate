@@ -9,7 +9,7 @@ client = MongoClient(os.environ.get("MONGO_URI"), serverSelectionTimeoutMS=5000)
 db = client["tracker"]
 employees = db["employees"]
 collection = db["logs"]
-admins = db["admins"]
+admins = db["admin"]
 
 @app.route('/log', methods=['POST'])
 def log():
