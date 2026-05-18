@@ -78,6 +78,8 @@ def validate_user():
     })
 @app.route('/login')
 def login_page():
+    return open('login.html').read()
+    
 @app.route('/')
 def home():
     return open("dashboard.html").read()
