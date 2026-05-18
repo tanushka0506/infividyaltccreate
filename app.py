@@ -1,13 +1,15 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session, redirect
 from pymongo import MongoClient
 
 app = Flask(__name__)
+app.secret_key = "super_secret_tracker_key"
 
 client = MongoClient(os.environ.get("MONGO_URI"), serverSelectionTimeoutMS=5000)
 db = client["tracker"]
 employees = db["employees"]
 collection = db["logs"]
+admin=db["admin"]
 
 @app.route('/log', methods=['POST'])
 def log():
