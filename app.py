@@ -76,7 +76,8 @@ def validate_user():
         "ok": True,
         "name": employee["name"]
     })
-    
+@app.route('/login')
+def login_page():
 @app.route('/')
 def home():
     return open("dashboard.html").read()
