@@ -125,7 +125,59 @@ def login():
         return redirect('/')
 
     return "Invalid Credentials"
+    @app.route('/add-employee', methods=['POST'])
+def add_employee():
 
+    if 'admin' not in session:
+        return jsonify({
+            "ok": False
+        })
+
+    data = request.json
+
+    existing = employees.find_one({
+        "userId": data.get("userId")
+    })
+
+    if existing:
+
+        return jsonify({
+            "ok": False,
+            "message": "ID already exists"
+        })
+
+    employees.insert_one({
+
+        "userId": data.get("userId"),
+
+        "name": data.get("name"),
+
+        "active": True
+    })
+
+    return jsonify({
+        "ok": True
+    })
+    @app.route('/blocked-sites', methods=['GET'])
+def blocked_sites():
+
+    data = list(
+        db["blocked_sites"]
+        .find({}, {"_id": 0})
+    )
+
+    return jsonify(data)
+@app.route('/employees', methods=['GET'])
+def get_employees():
+
+    if 'admin' not in session:
+        return jsonify([])
+
+    data = list(
+        employees.find({}, {"_id": 0})
+    )
+
+    return jsonify(data)
 
 @app.route('/')
 def home():
